@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,7 +8,10 @@ public class Main {
         String folderPath = "C:/Users/dimas/Desktop/test";
         File file = new File(folderPath);
 
-        System.out.println(getFolderSize(file));
+        FolderSizeCalculator calculator = new FolderSizeCalculator(file);
+        ForkJoinPool pool = new ForkJoinPool();
+        long size = pool.invoke(calculator);
+        System.out.println(size);
     }
 
     public static long getFolderSize(File folder){
