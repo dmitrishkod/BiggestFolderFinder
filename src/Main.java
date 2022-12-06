@@ -6,13 +6,14 @@ import java.util.concurrent.ForkJoinPool;
 
 public class Main {
     public static void main(String[] args) {
-        String folderPath = "C:/Users/dimas/Desktop/test";
+        String folderPath = "D:/Games/Age of Empires III - Definitive Edition";
         File file = new File(folderPath);
 
         FolderSizeCalculator calculator = new FolderSizeCalculator(file);
         ForkJoinPool pool = new ForkJoinPool();
         long size = pool.invoke(calculator);
-        System.out.println(size);
+        System.out.println(getHumanReadableSize(size));
+        System.out.println(getSizeFromHumanReadable(getHumanReadableSize(size)));
     }
 
     public static long getFolderSize(File folder){
@@ -29,7 +30,7 @@ public class Main {
     }
 
     //TODO: 24B,234Kb,36Mb,34Gb, 42Tb
-    public String getHumanReadableSize(long size){
+    public static String getHumanReadableSize(long size){
         BigInteger integer = new BigInteger("80000000000");
         if (size< 1024){
             return size + "B";
@@ -46,21 +47,21 @@ public class Main {
     //TODO: 24B,234Kb,36Mb,34Gb, 42Tb
     // 24B, 234K,36M, 34G, 42T
     // 235k => 240640 (235* 1024)
-    public long getSizeFromHumanReadable(String size){
+    public static long getSizeFromHumanReadable(String size){
         BigInteger integer = new BigInteger("80000000000");
-        String regex = "[^A-z]";
-        String abr = size.replace(regex,"");
+        String abr = size.replaceAll("[0-9]","");
+        String trueSize = size.replaceAll("[^0-9]","");
         switch (abr) {
             case "B":
-                return Long.parseLong(size);
+                return Long.parseLong(trueSize);
             case "Kb":
-                return Long.parseLong(size) * 1024;
+                return Long.parseLong(trueSize) * 1024;
             case "Mb":
-                return Long.parseLong(size) * 1000000;
+                return Long.parseLong(trueSize) * 1000000;
             case "Gb":
-                return Long.parseLong(size) * 1_000_000_000;
+                return Long.parseLong(trueSize) * 1_000_000_000;
             case "Tb":
-                return Long.parseLong(size) * integer.longValue();
+                return Long.parseLong(trueSize) * integer.longValue();
         }
         return 0;
     }
